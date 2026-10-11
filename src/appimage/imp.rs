@@ -14,12 +14,7 @@ pub(super) fn handle_file(path: &Path) -> Result<(), String> {
         return Err("The selected path is not a file".into());
     }
 
-    let is_appimage = path
-        .extension()
-        .and_then(|x| x.to_str())
-        .is_some_and(|x| x.eq_ignore_ascii_case("AppImage"));
-
-    if !is_appimage {
+    if !super::is_appimage(path) {
         return Err("The selected path is not an AppImage".into());
     }
 

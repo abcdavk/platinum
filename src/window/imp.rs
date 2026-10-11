@@ -1,11 +1,12 @@
+use adw::prelude::{AlertDialogExt, AlertDialogExtManual};
 use glib::subclass::InitializingObject;
 use gtk::gio::prelude::FileExt;
 use gtk::glib::types::StaticType;
-use gtk::prelude::{GtkWindowExt, WidgetExt};
+use gtk::prelude::{GtkWindowExt, ObjectExt, WidgetExt};
 use gtk::subclass::prelude::*;
 use gtk::{CompositeTemplate, glib};
 
-use crate::appimage::handle_file;
+use crate::appimage::{handle_file, is_appimage};
 
 // Object holding the state
 #[derive(CompositeTemplate, Default)]
@@ -41,7 +42,7 @@ impl ObjectImpl for Window {
 
         window.connect_is_active_notify(|window| {
             if !window.is_active() {
-                window.close();
+                // window.close();
             }
         });
 
@@ -56,19 +57,61 @@ impl ObjectImpl for Window {
                 return false;
             };
 
-            let mut installed = false;
+            let mut appimages = Vec::new();
             for file in file_list.files() {
                 if let Some(path) = file.path() {
-                    match handle_file(&path) {
-                        Ok(()) => installed = true,
-                        Err(error) => eprintln!("{error}"),
+                    if is_appimage(&path) {
+                        appimages.push(path);
+                    } else if let Err(error) = handle_file(&path) {
+                        eprintln!("{error}");
                     }
                 }
             }
 
-            if installed && let Some(window) = window_weak.upgrade() {
-                window.close();
+            if appimages.is_empty() {
+                return true;
             }
+
+            let Some(window) = window_weak.upgrade() else {
+                return true;
+            };
+            let names = appimages
+                .iter()
+                .filter_map(|path| path.file_name())
+                .map(|name| name.to_string_lossy())
+                .collect::<Vec<_>>()
+                .join("\n");
+            let body = if appimages.len() == 1 {
+                format!("Are you sure you want to install {names}?")
+            } else {
+                format!("Are you sure you want to install these AppImages?\n\n{names}")
+            };
+            let dialog = adw::AlertDialog::new(Some("Install AppImage?"), Some(&body));
+            dialog.add_responses(&[("cancel", "_Cancel"), ("install", "_Install")]);
+            dialog.set_response_appearance("install", adw::ResponseAppearance::Suggested);
+            dialog.set_default_response(Some("install"));
+            dialog.set_close_response("cancel");
+
+            let window_weak = window.downgrade();
+            dialog.choose(
+                Some(&window),
+                None::<&gtk::gio::Cancellable>,
+                move |response| {
+                    if response == "install" {
+                        let mut installed = false;
+                        for path in &appimages {
+                            match handle_file(path) {
+                                Ok(()) => installed = true,
+                                Err(error) => eprintln!("{error}"),
+                            }
+                        }
+
+                        if installed && let Some(window) = window_weak.upgrade() {
+                            window.close();
+                        }
+                    }
+                },
+            );
 
             true
         });
