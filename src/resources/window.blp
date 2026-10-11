@@ -1,8 +1,8 @@
 using Gtk 4.0;
 template $PlatinumMainWindow: Gtk.ApplicationWindow {
   title: "Platinum";
-  default-width: 800;
-  default-height: 600;
+  default-width: 600;
+  default-height: 400;
   resizable: false;
   decorated: false;
   styles ["window"]
@@ -84,47 +84,3 @@ template $PlatinumMainWindow: Gtk.ApplicationWindow {
     }
   }
 }
-
-
-// using Gtk 4.0;
-// using Adw 1;
-
-// template $PlatinumMainWindow: Gtk.ApplicationWindow {
-//   title: _("Platinum");
-//   default-width: 800;
-//   default-height: 600;
-//   decorated: false;
-//   styles ["window"]
-
-//   Adw.Bin drop_area {
-//     halign: fill;
-//     valign: fill;
-//     hexpand: true;
-//     vexpand: true;
-
-//     margin-bottom: 18;
-//     margin-top: 18;
-//     margin-start: 18;
-//     margin-end: 18;
-
-//     styles ["drop-area"]
-
-//     Gtk.Box {
-//       orientation: vertical;
-//       halign: center;
-//       valign: center;
-//       hexpand: true;
-//       vexpand: true;
-
-//       Label {
-//         label: _("Platinum");
-//         styles ["bold"]
-//       }
-
-//       Label {
-//         label: _("Drop AppImage into this area");
-//         styles ["dim-label"]
-//       }
-//     }
-//   }
-// }
