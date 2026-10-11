@@ -116,14 +116,9 @@ pub(super) fn handle_file(path: &Path) -> Result<(), String> {
         .ok_or_else(|| "AppImage filename is not valid UTF-8".to_owned())?;
     let app_name = appimage_name(&primary_entry.1, source_stem);
     let appimage_copy = dotdesktop::copy_appimage(path, &app_name)?;
-    let (desktop_filename, desktop_contents, icon_name, icon_stem) = if desktop_entries.len() == 1 {
+    let (desktop_contents, icon_name, icon_stem) = if desktop_entries.len() == 1 {
         let (desktop_path, desktop_contents) = primary_entry;
-        let desktop_filename = desktop_path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .ok_or_else(|| "Desktop filename is not valid UTF-8".to_owned())?;
         (
-            desktop_filename.to_owned(),
             desktop_contents.clone(),
             desktop_property(desktop_contents, "Icon")
                 .unwrap_or(&app_name)
@@ -133,7 +128,6 @@ pub(super) fn handle_file(path: &Path) -> Result<(), String> {
     } else {
         let (desktop_path, desktop_contents) = primary_entry;
         (
-            format!("{source_stem}.desktop"),
             single_desktop_entry(desktop_contents),
             desktop_property(desktop_contents, "Icon")
                 .unwrap_or(&app_name)
@@ -141,6 +135,7 @@ pub(super) fn handle_file(path: &Path) -> Result<(), String> {
             desktop_path.file_stem().map(std::ffi::OsStr::to_owned),
         )
     };
+    let desktop_filename = format!("{app_name}.desktop");
     let (_, icon_contents) = find_icon(&read_fs, &icon_name, icon_stem.as_deref())?
         .ok_or_else(|| format!("No application icon found for {desktop_filename}"))?;
     dotdesktop::install(
