@@ -1,0 +1,130 @@
+using Gtk 4.0;
+template $PlatinumMainWindow: Gtk.ApplicationWindow {
+  title: "Platinum";
+  default-width: 800;
+  default-height: 600;
+  resizable: false;
+  decorated: false;
+  styles ["window"]
+
+  Gtk.Box {
+    halign: fill;
+    valign: fill;
+    hexpand: true;
+    vexpand: true;
+
+    orientation: vertical;
+
+    margin-bottom: 18;
+    margin-top: 9;
+    margin-start: 18;
+    margin-end: 18;
+
+    Label {
+      label: "Platinum";
+      margin-bottom: 9;
+      styles ["bold"]
+    }
+
+    Gtk.Box drop_area {
+      halign: fill;
+      valign: fill;
+      hexpand: true;
+      vexpand: true;
+
+      styles ["drop-area"]
+
+      Gtk.Box {
+        halign: center;
+        valign: center;
+        hexpand: true;
+        vexpand: true;
+
+        orientation: vertical;
+
+        Label {
+          label: _("Drop AppImage into this area");
+          margin-bottom: 18;
+          styles ["dim-label"]
+        }
+
+        Gtk.Box {
+          styles ["icon-container"]
+
+          Gtk.Box {
+            orientation: vertical;
+            Image {
+              icon-name: "application-dwg";
+              pixel-size: 48;
+              margin-bottom: 8;
+            }
+            Label {
+              label: _("AppImage");
+            }
+          }
+
+          Image {
+            icon-name: "arrow-right-symbolic";
+            pixel-size: 48;
+          }
+
+          Gtk.Box {
+            orientation: vertical;
+            Image {
+              icon-name: "folder";
+              pixel-size: 48;
+              margin-bottom: 8;
+            }
+            Label {
+              label: _("Applications");
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// using Gtk 4.0;
+// using Adw 1;
+
+// template $PlatinumMainWindow: Gtk.ApplicationWindow {
+//   title: _("Platinum");
+//   default-width: 800;
+//   default-height: 600;
+//   decorated: false;
+//   styles ["window"]
+
+//   Adw.Bin drop_area {
+//     halign: fill;
+//     valign: fill;
+//     hexpand: true;
+//     vexpand: true;
+
+//     margin-bottom: 18;
+//     margin-top: 18;
+//     margin-start: 18;
+//     margin-end: 18;
+
+//     styles ["drop-area"]
+
+//     Gtk.Box {
+//       orientation: vertical;
+//       halign: center;
+//       valign: center;
+//       hexpand: true;
+//       vexpand: true;
+
+//       Label {
+//         label: _("Platinum");
+//         styles ["bold"]
+//       }
+
+//       Label {
+//         label: _("Drop AppImage into this area");
+//         styles ["dim-label"]
+//       }
+//     }
+//   }
+// }

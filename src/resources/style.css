@@ -1,0 +1,13 @@
+.window {
+    border: solid 1px @borders;
+    border-radius: 12px;
+}
+
+.drop-area {
+    border: dashed 2px @borders;
+    border-radius: 8px;
+}
+
+.bold {
+    font-weight: bold;
+}

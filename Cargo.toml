@@ -1,0 +1,11 @@
+[package]
+name = "platinum"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+adw = { version = "0.9.2", package = "libadwaita", features = ["v1_8"] }
+gtk = { version = "0.11.5", package = "gtk4", features = ["v4_12"] }
+
+[build-dependencies]
+glib-build-tools = "0.22.8"
