@@ -1,0 +1,3 @@
+[submodule "platinum-extension"]
+	path = platinum-extension
+	url = https://github.com/abcdavk/platinum-extension
