@@ -6,8 +6,19 @@
 .drop-area {
     border: dashed 2px @borders;
     border-radius: 8px;
+    animation: pulse 1s infinite alternate;
 }
 
 .bold {
     font-weight: bold;
+}
+
+@keyframes pulse {
+    from {
+        background-color: transparent;
+    }
+
+    to {
+        background-color: alpha(@accent_bg_color, 0.1);
+    }
 }

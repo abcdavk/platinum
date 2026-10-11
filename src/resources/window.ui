@@ -71,7 +71,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                         <child>
                           <object class="GtkImage">
                             <property name="icon-name">application-x-executable</property>
-                            <property name="pixel-size">48</property>
+                            <property name="pixel-size">72</property>
                             <property name="margin-bottom">8</property>
                           </object>
                         </child>
@@ -94,7 +94,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                         <child>
                           <object class="GtkImage">
                             <property name="icon-name">folder</property>
-                            <property name="pixel-size">48</property>
+                            <property name="pixel-size">72</property>
                             <property name="margin-bottom">8</property>
                           </object>
                         </child>
