@@ -49,18 +49,25 @@ impl ObjectImpl for Window {
             gtk::gdk::FileList::static_type(),
             gtk::gdk::DragAction::COPY,
         );
+        let window_weak = window.downgrade();
 
-        target.connect_drop(|_, value, _, _| {
+        target.connect_drop(move |_, value, _, _| {
             let Ok(file_list) = value.get::<gtk::gdk::FileList>() else {
                 return false;
             };
 
+            let mut installed = false;
             for file in file_list.files() {
                 if let Some(path) = file.path() {
-                    if let Err(error) = handle_file(&path) {
-                        eprintln!("{error}");
+                    match handle_file(&path) {
+                        Ok(()) => installed = true,
+                        Err(error) => eprintln!("{error}"),
                     }
                 }
+            }
+
+            if installed && let Some(window) = window_weak.upgrade() {
+                window.close();
             }
 
             true
