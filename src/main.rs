@@ -1,4 +1,5 @@
 mod appimage;
+mod dotdesktop;
 mod window;
 
 use gtk::prelude::*;
