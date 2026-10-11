@@ -3,7 +3,6 @@
   <gresource prefix="/id/abcdavk/platinum">
     <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
     <file>icons/scalable/actions/arrow-right-symbolic.svg</file>
-    <file>icons/scalable/mimetypes/application-dwg.svg</file>
 
     <file>style.css</file>
   </gresource>

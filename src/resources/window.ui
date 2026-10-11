@@ -8,8 +8,8 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
   <requires lib="gtk" version="4.0"/>
   <template class="PlatinumMainWindow" parent="GtkApplicationWindow">
     <property name="title">Platinum</property>
-    <property name="default-width">800</property>
-    <property name="default-height">600</property>
+    <property name="default-width">600</property>
+    <property name="default-height">400</property>
     <property name="resizable">false</property>
     <property name="decorated">false</property>
     <style>
@@ -70,7 +70,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                         <property name="orientation">1</property>
                         <child>
                           <object class="GtkImage">
-                            <property name="icon-name">application-dwg</property>
+                            <property name="icon-name">application-x-executable</property>
                             <property name="pixel-size">48</property>
                             <property name="margin-bottom">8</property>
                           </object>
