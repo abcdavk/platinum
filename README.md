@@ -1,8 +1,34 @@
 # Platinum
 
-Platinum is tool that helps you manage AppImages as simple as drag and drop.
+Platinum is a tool that helps you manage AppImages with drag and drop.
 
-![Dragging AppImage to Platinum](images/platinum-1.png)
+![Dragging AppImage to Platinum](images/demonstration.mp4)
+
+## Platform support
+
+Platinum currently supports GNOME and requires the Nautilus file manager. Other desktop environments and file managers are not supported.
+
+## Build and run
+
+Install Rust, Cargo, and the native GTK build dependencies. Platinum needs GTK 4.12 or newer and libadwaita 1.8 or newer. On Debian or Ubuntu (use a release/repository that provides these versions):
+
+```sh
+sudo apt install build-essential pkg-config libgtk-4-dev libadwaita-1-dev blueprint-compiler
+```
+
+Run Platinum from the project directory:
+
+```sh
+cargo run
+```
+
+Build an optimized executable:
+
+```sh
+cargo build --release
+```
+
+The executable will be available at `target/release/platinum`.
 
 ## Work In Progress
 
