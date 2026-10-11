@@ -2,7 +2,9 @@
 
 Platinum is a tool that helps you manage AppImages with drag and drop.
 
-![Dragging AppImage to Platinum](images/demonstration.mp4)
+<video width="600" controls>
+  <source src="images/demonstration.mp4" type="video/mp4">
+</video>
 
 ## Platform support
 
