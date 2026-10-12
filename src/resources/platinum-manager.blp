@@ -1,0 +1,59 @@
+using Gtk 4.0;
+
+template $PlatinumManagerWindow: Gtk.ApplicationWindow {
+  title: _("Platinum Manager");
+  default-width: 720;
+  default-height: 520;
+  decorated: false;
+  styles ["window"]
+
+  Gtk.Box {
+    orientation: vertical;
+    spacing: 12;
+    margin-top: 18;
+    margin-bottom: 18;
+    margin-start: 18;
+    margin-end: 18;
+
+    Gtk.Box {
+      orientation: horizontal;
+
+      Label {
+        label: _("Platinum Manager");
+        hexpand: true;
+        halign: start;
+        styles ["bold"]
+      }
+
+      Button refresh_button {
+        icon-name: "view-refresh-symbolic";
+        tooltip-text: _("Close");
+        css-classes: ["circular"];
+      }
+      Button close_button {
+        margin-start: 8;
+        icon-name: "window-close-symbolic";
+        tooltip-text: _("Close");
+        css-classes: ["circular"];
+      }
+    }
+
+    Label empty_label {
+      label: _("No managed AppImages found.");
+      wrap: true;
+      visible: false;
+      styles ["dim-label"]
+    }
+
+    ScrolledWindow {
+      hexpand: true;
+      vexpand: true;
+      hscrollbar-policy: never;
+
+      Gtk.Box apps_list {
+        orientation: vertical;
+        spacing: 9;
+      }
+    }
+  }
+}

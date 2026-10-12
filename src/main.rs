@@ -1,9 +1,11 @@
 mod appimage;
 mod dotdesktop;
+mod manager;
 mod window;
 
 use gtk::prelude::*;
 use gtk::{gdk, gio, glib};
+use manager::ManagerWindow;
 use window::Window;
 
 const APP_ID: &str = "org.abcdavk.platinum";
@@ -25,10 +27,26 @@ fn main() -> glib::ExitCode {
     load_css(&display);
 
     // Create a new application
-    let app = adw::Application::builder().application_id(APP_ID).build();
+    let app = adw::Application::builder()
+        .application_id(APP_ID)
+        .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
+        .build();
 
     // Connect to "activate" signal of `app`
     app.connect_activate(build_ui);
+    app.connect_command_line(|app, command_line| {
+        let arguments = command_line.arguments();
+        if arguments
+            .iter()
+            .any(|argument| argument == "-m" || argument == "--manager")
+        {
+            let manager = ManagerWindow::new(app);
+            manager.present();
+        } else {
+            app.activate();
+        }
+        glib::ExitCode::SUCCESS
+    });
 
     // Run the application
     app.run()

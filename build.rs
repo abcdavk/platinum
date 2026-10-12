@@ -3,7 +3,7 @@ use std::process::{Command, Stdio};
 
 fn main() {
     let resources = Path::new("src/resources");
-    let blp_files = ["window"];
+    let blp_files = ["window", "platinum-manager"];
 
     for name in blp_files {
         let input = resources.join(format!("{name}.blp"));

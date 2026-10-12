@@ -42,7 +42,7 @@ impl ObjectImpl for Window {
 
         window.connect_is_active_notify(|window| {
             if !window.is_active() {
-                // window.close();
+                window.close();
             }
         });
 

@@ -287,7 +287,7 @@ fn find_icon(
 
 #[cfg(test)]
 mod tests {
-    use super::appimage_name;
+    use super::{appimage_name, single_desktop_entry};
 
     #[test]
     fn uses_desktop_name_for_appimage_and_icon_filename() {
@@ -307,5 +307,15 @@ mod tests {
             appimage_name("[Desktop Entry]\nName=...\n", "original"),
             "original"
         );
+    }
+
+    #[test]
+    fn retains_version_when_selecting_primary_desktop_entry() {
+        let reduced = single_desktop_entry(
+            "[Desktop Entry]\nName=Example\nX-AppImage-Version=1.2\nX-AppImage-Publisher=Example Inc.\nX-AppImage-Creator=Creator\n",
+        );
+        assert!(reduced.contains("X-AppImage-Version=1.2"));
+        assert!(!reduced.contains("X-AppImage-Publisher"));
+        assert!(!reduced.contains("X-AppImage-Creator"));
     }
 }
