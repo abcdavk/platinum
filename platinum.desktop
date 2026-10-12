@@ -2,7 +2,7 @@
 Name=Platinum Manager
 Comment=Manage AppImages installed with Platinum
 Exec=platinum -m
-Icon=application-x-executable
+Icon=~/.local/share/icons/hicolor/scalabel/apps/org.abcdavk.platinum.svg
 Terminal=false
 Type=Application
 Categories=Utility;System;

@@ -2,7 +2,7 @@
 
 Platinum is a tool that helps you manage AppImages with drag and drop.
 
-![Watch the demonstration](images/ezgif-84fe26cfb383b5e9.gif)
+![Watch the demonstration](assets/images/ezgif-84fe26cfb383b5e9.gif)
 
 ## Platform support
 
