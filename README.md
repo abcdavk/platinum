@@ -51,5 +51,7 @@ The executable will be available at `target/release/platinum`.
 - [x] Create AppImage validation.
 - [x] Extract metadata from the AppImage.
 - [x] Create a `.desktop` file generator.
-- [ ] User confirmation dialog.
-- [ ] AppImage manager
+- [x] User confirmation dialog.
+- [x] AppImage manager.
+- [ ] Add DwarFS AppImage support.
+- [ ] Icon changer.
