@@ -1,3 +1,6 @@
+use std::cell::Cell;
+use std::rc::Rc;
+
 use adw::prelude::{AlertDialogExt, AlertDialogExtManual};
 use glib::subclass::InitializingObject;
 use gtk::gio::prelude::FileExt;
@@ -39,9 +42,11 @@ impl ObjectImpl for Window {
         self.parent_constructed();
 
         let window = self.obj();
+        let confirmation_open = Rc::new(Cell::new(false));
 
-        window.connect_is_active_notify(|window| {
-            if !window.is_active() {
+        let confirmation_open_weak = Rc::clone(&confirmation_open);
+        window.connect_is_active_notify(move |window| {
+            if !window.is_active() && !confirmation_open_weak.get() {
                 window.close();
             }
         });
@@ -51,6 +56,7 @@ impl ObjectImpl for Window {
             gtk::gdk::DragAction::COPY,
         );
         let window_weak = window.downgrade();
+        let confirmation_open_for_drop = Rc::clone(&confirmation_open);
 
         target.connect_drop(move |_, value, _, _| {
             let Ok(file_list) = value.get::<gtk::gdk::FileList>() else {
@@ -92,11 +98,15 @@ impl ObjectImpl for Window {
             dialog.set_default_response(Some("install"));
             dialog.set_close_response("cancel");
 
+            confirmation_open_for_drop.set(true);
             let window_weak = window.downgrade();
+            let confirmation_open_for_response = Rc::clone(&confirmation_open_for_drop);
             dialog.choose(
                 Some(&window),
                 None::<&gtk::gio::Cancellable>,
                 move |response| {
+                    confirmation_open_for_response.set(false);
+
                     if response == "install" {
                         let mut installed = false;
                         for path in &appimages {
@@ -107,6 +117,10 @@ impl ObjectImpl for Window {
                         }
 
                         if installed && let Some(window) = window_weak.upgrade() {
+                            window.close();
+                        }
+                    } else {
+                        if let Some(window) = window_weak.upgrade() {
                             window.close();
                         }
                     }
