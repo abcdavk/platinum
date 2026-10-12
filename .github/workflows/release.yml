@@ -26,6 +26,7 @@ jobs:
             pkg-config \
             libgtk-4-dev \
             libadwaita-1-dev
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
