@@ -2,6 +2,8 @@
 
 Platinum is a tool that helps you manage AppImages with drag and drop.
 
+![Platinum Banner](assets/images/platinum_banner.png)
+
 ![Watch the demonstration](assets/images/ezgif-84fe26cfb383b5e9.gif)
 
 ## Platform support
@@ -46,8 +48,8 @@ The executable will be available at `target/release/platinum`.
 
 ## Work In Progress
 
-- [X] Create a Platinum Drop Window.
-- [X] Dragging file detection.
+- [x] Create a Platinum Drop Window.
+- [x] Dragging file detection.
 - [x] Create AppImage validation.
 - [x] Extract metadata from the AppImage.
 - [x] Create a `.desktop` file generator.
