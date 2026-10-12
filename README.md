@@ -4,8 +4,6 @@ Platinum is a tool that helps you manage AppImages with drag and drop.
 
 ![Platinum Banner](assets/images/platinum_banner.png)
 
-![Watch the demonstration](assets/images/ezgif-84fe26cfb383b5e9.gif)
-
 ## Platform support
 
 Platinum currently supports GNOME and requires the Nautilus file manager. Other desktop environments and file managers are not supported.
