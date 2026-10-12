@@ -8,6 +8,20 @@ Platinum is a tool that helps you manage AppImages with drag and drop.
 
 Platinum currently supports GNOME and requires the Nautilus file manager. Other desktop environments and file managers are not supported.
 
+## Install on Your Distro
+
+Run this setup script:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/abcdavk/platinum/refs/heads/main/tools/setup.sh | bash
+```
+
+To uninstall:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/abcdavk/platinum/refs/heads/main/tools/uninstall.sh | bash
+```
+
 ## Build and run
 
 Install Rust, Cargo, and the native GTK build dependencies. Platinum needs GTK 4.12 or newer and libadwaita 1.8 or newer. On Debian or Ubuntu (use a release/repository that provides these versions):
