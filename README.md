@@ -4,10 +4,6 @@ Platinum is a tool that helps you manage AppImages with drag and drop.
 
 ![Platinum Banner](assets/images/platinum_banner.png)
 
-## Platform support
-
-Platinum currently supports GNOME and requires the Nautilus file manager. Other desktop environments and file managers are not supported.
-
 ## Install on Your Distro
 
 Run this setup script:
@@ -21,6 +17,10 @@ To uninstall:
 ```sh
 curl -fsSL https://raw.githubusercontent.com/abcdavk/platinum/refs/heads/main/tools/uninstall.sh | bash
 ```
+
+## Platform support
+
+Platinum currently supports GNOME and requires the Nautilus file manager. Other desktop environments and file managers are not supported.
 
 ## Build and run
 
