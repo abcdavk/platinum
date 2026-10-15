@@ -1,7 +1,12 @@
 use std::{
     env, fs,
+    io::Write,
+    os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
 };
+
+static TEMP_FILE_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Clone, Debug)]
 pub struct ManagedApp {
@@ -176,7 +181,22 @@ pub(super) fn copy_appimage(path: &Path, name: &str) -> Result<PathBuf, String> 
             .map_err(|e| format!("Failed to copy AppImage to {}: {e}", destination.display()))?;
     }
 
+    make_executable(&destination)?;
+
     Ok(destination)
+}
+
+fn make_executable(path: &Path) -> Result<(), String> {
+    let permissions = fs::metadata(path)
+        .map_err(|e| {
+            format!(
+                "Failed to read AppImage permissions for {}: {e}",
+                path.display()
+            )
+        })?
+        .permissions();
+    fs::set_permissions(path, fs::Permissions::from_mode(permissions.mode() | 0o111))
+        .map_err(|e| format!("Failed to make AppImage executable {}: {e}", path.display()))
 }
 
 pub(super) fn install(
@@ -207,12 +227,69 @@ pub(super) fn install(
 
     fs::write(&icon_path, icon_contents)
         .map_err(|e| format!("Failed to write icon to {}: {e}", icon_path.display()))?;
-    fs::write(&desktop_path, updated_desktop).map_err(|e| {
-        format!(
-            "Failed to write desktop file to {}: {e}",
-            desktop_path.display()
-        )
-    })
+    write_desktop_entry(&desktop_path, updated_desktop.as_bytes())
+}
+
+fn write_desktop_entry(desktop_path: &Path, contents: &[u8]) -> Result<(), String> {
+    let file_name = desktop_path
+        .file_name()
+        .ok_or_else(|| "Invalid desktop entry path".to_owned())?;
+    let mut temporary_path = desktop_path.to_path_buf();
+    let mut temporary_file = loop {
+        let sequence = TEMP_FILE_SEQUENCE.fetch_add(1, Ordering::Relaxed);
+        let temporary_name = format!(
+            ".{}.{}.{}.tmp",
+            file_name.to_string_lossy(),
+            std::process::id(),
+            sequence
+        );
+        temporary_path.set_file_name(temporary_name);
+        match fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary_path)
+        {
+            Ok(file) => break file,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => {
+                return Err(format!(
+                    "Failed to create temporary desktop entry {}: {error}",
+                    temporary_path.display()
+                ));
+            }
+        }
+    };
+
+    if let Err(error) = temporary_file.write_all(contents) {
+        drop(temporary_file);
+        return Err(remove_temporary_file(
+            &temporary_path,
+            format!("Failed to write temporary desktop entry: {error}"),
+        ));
+    }
+    drop(temporary_file);
+
+    if let Err(error) = fs::rename(&temporary_path, desktop_path) {
+        return Err(remove_temporary_file(
+            &temporary_path,
+            format!(
+                "Failed to publish desktop entry {}: {error}",
+                desktop_path.display()
+            ),
+        ));
+    }
+
+    Ok(())
+}
+
+fn remove_temporary_file(path: &Path, cause: String) -> String {
+    match fs::remove_file(path) {
+        Ok(()) => cause,
+        Err(error) => format!(
+            "{cause}; failed to remove temporary file {}: {error}",
+            path.display()
+        ),
+    }
 }
 
 fn update_desktop(
@@ -336,9 +413,8 @@ fn exec_arguments(exec: &str) -> &str {
 
 #[cfg(test)]
 mod tests {
-    use super::{quote_exec_path, update_desktop};
-    use std::path::Path;
-    use std::path::PathBuf;
+    use super::{make_executable, quote_exec_path, update_desktop, write_desktop_entry};
+    use std::{fs, os::unix::fs::PermissionsExt, path::Path, path::PathBuf};
 
     #[test]
     fn updates_exec_icon_and_try_exec_in_desktop_entry() {
@@ -372,5 +448,46 @@ mod tests {
             quote_exec_path("/path/with $pecial/`chars`\\name"),
             "\"/path/with \\$pecial/\\`chars\\`\\\\name\""
         );
+    }
+
+    #[test]
+    fn atomically_publishes_desktop_entry_without_leaving_temporary_files() {
+        let directory = std::env::temp_dir().join(format!(
+            "platinum-desktop-entry-test-{}-{}",
+            std::process::id(),
+            super::TEMP_FILE_SEQUENCE.fetch_add(1, super::Ordering::Relaxed)
+        ));
+        fs::create_dir(&directory).unwrap();
+        let desktop_path = directory.join("Example.desktop");
+        fs::write(&desktop_path, b"old contents").unwrap();
+
+        write_desktop_entry(&desktop_path, b"[Desktop Entry]\nName=Example\n").unwrap();
+
+        assert_eq!(
+            fs::read(&desktop_path).unwrap(),
+            b"[Desktop Entry]\nName=Example\n"
+        );
+        assert_eq!(fs::read_dir(&directory).unwrap().count(), 1);
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn makes_appimage_executable_without_removing_existing_permissions() {
+        let directory = std::env::temp_dir().join(format!(
+            "platinum-appimage-permissions-test-{}-{}",
+            std::process::id(),
+            super::TEMP_FILE_SEQUENCE.fetch_add(1, super::Ordering::Relaxed)
+        ));
+        fs::create_dir(&directory).unwrap();
+        let appimage_path = directory.join("Example.AppImage");
+        fs::write(&appimage_path, b"AppImage").unwrap();
+        fs::set_permissions(&appimage_path, fs::Permissions::from_mode(0o644)).unwrap();
+
+        make_executable(&appimage_path).unwrap();
+
+        let mode = fs::metadata(&appimage_path).unwrap().permissions().mode();
+        assert_eq!(mode & 0o111, 0o111);
+        assert_eq!(mode & 0o644, 0o644);
+        fs::remove_dir_all(directory).unwrap();
     }
 }
