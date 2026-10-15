@@ -130,7 +130,7 @@ pub(super) fn handle_file(path: &Path) -> Result<(), String> {
             desktop_path.file_stem().map(std::ffi::OsStr::to_owned),
         )
     };
-    let desktop_filename = format!("{app_name}.desktop");
+    let desktop_filename = desktop_filename(&app_name);
     let (_, icon_contents) = find_icon(&read_fs, &icon_name, icon_stem.as_deref())?
         .ok_or_else(|| format!("No application icon found for {desktop_filename}"))?;
     dotdesktop::install(
@@ -168,6 +168,10 @@ fn appimage_name(contents: &str, fallback: &str) -> String {
     } else {
         name.to_owned()
     }
+}
+
+fn desktop_filename(app_name: &str) -> String {
+    format!("{}.desktop", app_name.to_lowercase())
 }
 
 fn single_desktop_entry(contents: &str) -> String {
@@ -287,7 +291,7 @@ fn find_icon(
 
 #[cfg(test)]
 mod tests {
-    use super::{appimage_name, single_desktop_entry};
+    use super::{appimage_name, desktop_filename, single_desktop_entry};
 
     #[test]
     fn uses_desktop_name_for_appimage_and_icon_filename() {
@@ -295,6 +299,7 @@ mod tests {
             appimage_name("[Desktop Entry]\nName=\"Krita\"\n", "original"),
             "Krita"
         );
+        assert_eq!(desktop_filename("Krita"), "krita.desktop");
     }
 
     #[test]
