@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 APP_NAME="Platinum"
-BINARY_URL="https://github.com/abcdavk/platinum/releases/download/v0.2.0/platinum_x86-64"
+BINARY_URL="https://github.com/abcdavk/platinum/releases/latest/download/platinum_x86-64"
 EXTENSION_REPO="https://github.com/abcdavk/platinum-extension"
 ICON_URL="https://raw.githubusercontent.com/abcdavk/platinum/refs/heads/main/assets/icons/platinum.svg"
 DESKTOP_FILE_URL="https://raw.githubusercontent.com/abcdavk/platinum/refs/heads/main/platinum.desktop"
